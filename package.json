@@ -1,0 +1,21 @@
+{
+  "name": "shapes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "hotrelaod": "nodemon --watch src -x 'pnpm run build'",
+    "build": "rollup -c \"rollup_config.js\""
+  },
+  "author": "iya_gershman",
+  "license": "MIT",
+  "dependencies": {
+    "three": "0.147.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "nodemon": "^2.0.20",
+    "rollup": "^3.8.1"
+  }
+}
