@@ -54,7 +54,7 @@ export class ThreejsController extends Component {
     const near = 0.5;
     const far = 10000.0;
     this.camera_ = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.camera_.position.set(0, 0, 500);
+    this.camera_.position.set(0, 0, 550);
     this.camera_.lookAt(0, 0, 0);
 
     this.scene_ = new THREE.Scene();
