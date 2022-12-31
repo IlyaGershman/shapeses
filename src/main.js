@@ -43,12 +43,12 @@ class ShapesGame {
     this.entityManager_.Add(world, "world");
 
     // Uncomment for testing
-    const player = new Entity();
-    player.AddComponent(new PlayerController());
-    this.entityManager_.Add(player, "player");
+    // const player = new Entity();
+    // player.AddComponent(new PlayerController());
+    // this.entityManager_.Add(player, "player");
 
-    this.renderer_.AttachCameraHelper();
-    this.renderer_.AttachAxesHelper();
+    // this.renderer_.AttachCameraHelper();
+    // this.renderer_.AttachAxesHelper();
   }
 
   RAF_() {
