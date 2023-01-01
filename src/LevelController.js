@@ -23,7 +23,6 @@ export class LevelController extends Component {
       shapes.Sphere(),
       shapes.Icosahedron(),
       shapes.Octahedron(),
-      shapes.Tetrahedron(),
       shapes.Dome(),
       shapes.Cylinder(),
       shapes.Cone(),
@@ -38,6 +37,8 @@ export class LevelController extends Component {
     this.targetObjects = {};
     this.foundShapes = {};
     this.levelSceneObjectGroup = null;
+    this.score = 0;
+    this.level = 1;
   }
 
   InitEntity() {
@@ -123,7 +124,10 @@ export class LevelController extends Component {
       blockPlane.userData.ground = true;
       return blockPlane;
     }
-
+    const meshColors = [
+      0xffd700, 0xffa500, 0xb22222, 0x00bfff, 0x228b22, 0x8b008b, 0xff00ff,
+      0xd2691e, 0x0000ff, 0x808080,
+    ];
     this.threejs_.scene_.add(createFloor());
 
     const mechesDrag = [];
@@ -132,7 +136,7 @@ export class LevelController extends Component {
       const shape = shapes[i].geometry;
       const mech = this.GetMechFromGeometry(
         shape,
-        0x008000,
+        meshColors[this.level % meshColors.length],
         mostRightPoint - 100,
         i * 140 - 230,
         10,
@@ -167,7 +171,7 @@ export class LevelController extends Component {
       const mech = this.GetMechFromGeometry(
         shape,
         0x000000,
-        (i % numberOfCols) * 420 - 200,
+        (i % numberOfCols) * 420 - 250,
         Math.floor(i / numberOfCols) * 250 - 150,
         0,
         0,
@@ -208,6 +212,7 @@ export class LevelController extends Component {
 
   OnNewLevel() {
     this.DestroyLevel_();
+    this.level += 1;
     this.AssembleLevel_();
   }
 
@@ -224,6 +229,12 @@ export class LevelController extends Component {
       if (mech.position.distanceTo(targetMech.position) < 20) {
         mech.position.set(targetMech.position.x, targetMech.position.y, 10);
         this.foundShapes[type] = true;
+        this.score += 1;
+
+        document.getElementById(
+          "score"
+        ).innerHTML = `SCORE: ${this.score} | LEVEL: ${this.level}`;
+
         this.Broadcast({
           topic: "shape.found",
           value: {
