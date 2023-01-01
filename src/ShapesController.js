@@ -63,7 +63,7 @@ export class ShapesFactory {
 
   Heart() {
     const x = -25,
-      y = 0;
+      y = -25;
 
     const heartShape = new THREE.Shape()
       .moveTo(x + 25, y + 25)
@@ -98,7 +98,7 @@ export class ShapesFactory {
       ctx.quadraticCurveTo(x + width, y, x + width - radius, y);
       ctx.lineTo(x + radius, y);
       ctx.quadraticCurveTo(x, y, x, y + radius);
-    })(roundedRectShape, -50, 0, 100, 100, 10);
+    })(roundedRectShape, -50, -50, 100, 100, 10);
 
     return {
       geometry: new THREE.ExtrudeGeometry(roundedRectShape, extrudeSettings),
@@ -113,7 +113,7 @@ export class ShapesFactory {
       ctx.moveTo(x, y);
       ctx.absarc(x, y, radius, 0, Math.PI * 2, false);
       return ctx;
-    })(circleShape, 0, 30, 60);
+    })(circleShape, 0, 0, 60);
 
     return {
       geometry: new THREE.ExtrudeGeometry(circleShape, extrudeSettings),
@@ -139,7 +139,7 @@ export class ShapesFactory {
         y + size * Math.sin(Math.PI / 2)
       ); // close path
       return ctx;
-    })(pentagonShape, 0, 70, 50);
+    })(pentagonShape, 0, 0, 50);
 
     return {
       geometry: new THREE.ExtrudeGeometry(pentagonShape, extrudeSettings),
@@ -165,7 +165,7 @@ export class ShapesFactory {
         y + size * Math.sin(Math.PI / 2)
       ); // close path
       return ctx;
-    })(hexagonShape, 0, 70, 50);
+    })(hexagonShape, 0, 0, 50);
 
     return {
       geometry: new THREE.ExtrudeGeometry(hexagonShape, extrudeSettings),
@@ -184,7 +184,7 @@ export class ShapesFactory {
       ctx.quadraticCurveTo(x + w, y + h / 10, x + (w * 9) / 10, y + h / 10);
       ctx.quadraticCurveTo(x + w / 2, y + h / 2, x, y);
       return ctx;
-    })(fishShape, -50, 50, 100, 100);
+    })(fishShape, -50, 0, 100, 100);
 
     return {
       geometry: new THREE.ExtrudeGeometry(fishShape, extrudeSettings),
@@ -203,77 +203,11 @@ export class ShapesFactory {
       holePath.absarc(x, y, innerRadius, 0, Math.PI * 2, true);
       ctx.holes.push(holePath);
       return ctx;
-    })(donutShape, 0, 60, 40, 60);
+    })(donutShape, 0, 0, 40, 60);
 
     return {
       geometry: new THREE.ExtrudeGeometry(donutShape, extrudeSettings),
       type: this.shapeTypes.Donut,
-    };
-  }
-
-  Smiley() {
-    const smileyShape = new THREE.Shape();
-    (function createSmileyFaceShape(ctx, x, y, size) {
-      ctx.moveTo(x, y + size / 2);
-      ctx.absarc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2, false);
-      const smileyEye1Path = new THREE.Path();
-      smileyEye1Path.moveTo(x + size / 4, y + (size * 3) / 4);
-      smileyEye1Path.absellipse(
-        x + size / 5,
-        y + (size * 3) / 4,
-        size / 10,
-        size / 10,
-        0,
-        Math.PI * 2,
-        true
-      );
-      const smileyEye2Path = new THREE.Path();
-      smileyEye2Path.moveTo(x + (size * 3) / 4, y + (size * 3) / 4);
-      smileyEye2Path.absarc(
-        x + (size * 4) / 5,
-        y + (size * 3) / 4,
-        size / 10,
-        0,
-        Math.PI * 2,
-        true
-      );
-      const smileyMouthPath = new THREE.Path();
-      smileyMouthPath.moveTo(x + size / 5, y + size / 2);
-      smileyMouthPath.quadraticCurveTo(
-        x + size / 2,
-        y + size / 4,
-        x + (size * 4) / 5,
-        y + size / 2
-      );
-      smileyMouthPath.bezierCurveTo(
-        x + (size * 9) / 10,
-        y + size / 2 - size / 8,
-        x + (size * 9) / 10,
-        y + size / 2 - size / 4,
-        x + (size * 4) / 5,
-        y + size / 4
-      );
-      smileyMouthPath.quadraticCurveTo(
-        x + size / 2,
-        y,
-        x + size / 5,
-        y + size / 4
-      );
-      smileyMouthPath.quadraticCurveTo(
-        x,
-        y + size / 2 - size / 4,
-        x + size / 5,
-        y + size / 2
-      );
-      ctx.holes.push(smileyEye1Path);
-      ctx.holes.push(smileyEye2Path);
-      ctx.holes.push(smileyMouthPath);
-      return ctx;
-    })(smileyShape, -50, -25, 100);
-
-    return {
-      geometry: new THREE.ExtrudeGeometry(smileyShape, extrudeSettings),
-      type: this.shapeTypes.Smiley,
     };
   }
 
@@ -294,7 +228,7 @@ export class ShapesFactory {
       }
       ctx.closePath();
       return ctx;
-    })(starShape, 0, 50, 60);
+    })(starShape, 0, 0, 60);
 
     return {
       geometry: new THREE.ExtrudeGeometry(starShape, extrudeSettings),
@@ -319,7 +253,7 @@ export class ShapesFactory {
       }
       ctx.closePath();
       return ctx;
-    })(starShape, 0, 50, 60);
+    })(starShape, 0, 0, 60);
 
     return {
       geometry: new THREE.ExtrudeGeometry(starShape, extrudeSettings),
