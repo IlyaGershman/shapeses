@@ -26,7 +26,7 @@ class BackgroundCloud {
 
       this.position_.x = math.rand_range(-1000, 2000);
       this.position_.y = math.rand_range(-200, 200);
-      this.position_.z = math.rand_range(500, -1000);
+      this.position_.z = math.rand_range(-100, -1000);
       this.scale_ = math.rand_range(10, 20);
 
       const q = new THREE.Quaternion().setFromAxisAngle(

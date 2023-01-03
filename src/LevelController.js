@@ -1,5 +1,6 @@
 import { Component } from "./ecs/entity";
 import * as THREE from "three";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { ShapesFactory } from "./ShapesController";
 import { randomlyPickFromArray } from "./utils";
 
@@ -39,14 +40,16 @@ export class LevelController extends Component {
     this.levelSceneObjectGroup = null;
     this.score = 0;
     this.level = 1;
+    this.velocity_ = 50.0;
+    this.position_ = new THREE.Vector3(-200, -50, 400);
   }
 
   InitEntity() {
     this.threejs_ =
       this.FindEntity("renderer").GetComponent("ThreejsController");
 
-    this.RegisterHandler("shapes.matched", (m) => this.OnNewLevel(m));
     this.RegisterHandler("level.complited", (m) => this.OnNewLevel(m));
+    this.LoadModel_();
     this.OnStart();
   }
 
@@ -109,8 +112,8 @@ export class LevelController extends Component {
     var height = points[0].y - points[2].y;
 
     function createFloor() {
-      let pos = { x: -50, y: 0, z: 0 };
-      let scale = { x: width / 1.3, y: 10, z: height / 1.3 };
+      let pos = { x: 0, y: 0, z: 0 };
+      let scale = { x: width - 400, y: 10, z: height };
 
       let blockPlane = new THREE.Mesh(
         new THREE.BoxBufferGeometry(),
@@ -137,13 +140,13 @@ export class LevelController extends Component {
       const mech = this.GetMechFromGeometry(
         shape,
         meshColors[this.level % meshColors.length],
-        mostRightPoint - 100,
-        i * 140 - 230,
+        i % 2 ? mostRightPoint - 120 : -mostRightPoint + 120,
+        Math.floor(i / 2) * 250 - 130,
         10,
         0,
         0,
         0,
-        1
+        2
       );
 
       mech.castShadow = true;
@@ -171,13 +174,13 @@ export class LevelController extends Component {
       const mech = this.GetMechFromGeometry(
         shape,
         0x000000,
-        (i % numberOfCols) * 420 - 250,
-        Math.floor(i / numberOfCols) * 250 - 150,
+        (i % numberOfCols) * 300 - 170,
+        Math.floor(i / numberOfCols) * 250 - 130,
         0,
         0,
         0,
         0,
-        1
+        2
       );
 
       mechesAim[shapesShuffled[i].type] = mech;
@@ -213,10 +216,50 @@ export class LevelController extends Component {
   OnNewLevel() {
     this.DestroyLevel_();
     this.level += 1;
+    this.position_ = new THREE.Vector3(-200, -50, 400);
     this.AssembleLevel_();
   }
 
   OnResize_() {}
+
+  LoadModel_() {
+    const loader = new FBXLoader();
+    loader.setPath("./resources/Dinosaurs/FBX/");
+    loader.load("Velociraptor.fbx", (fbx) => {
+      fbx.scale.setScalar(0.16);
+      fbx.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
+
+      this.mesh_ = fbx;
+      this.threejs_.scene_.add(this.mesh_);
+
+      fbx.traverse((c) => {
+        let materials = c.material;
+        if (!(c.material instanceof Array)) {
+          materials = [c.material];
+        }
+
+        for (let m of materials) {
+          if (m) {
+            m.specular = new THREE.Color(0x000000);
+            m.color.offsetHSL(0, 0, 0.25);
+          }
+        }
+        c.castShadow = true;
+        c.receiveShadow = true;
+      });
+
+      const m = new THREE.AnimationMixer(fbx);
+      this.mixer_ = m;
+
+      for (let i = 0; i < fbx.animations.length; ++i) {
+        if (fbx.animations[i].name.includes("Run")) {
+          const clip = fbx.animations[i];
+          const action = this.mixer_.clipAction(clip);
+          action.play();
+        }
+      }
+    });
+  }
 
   Update(timeElapsed) {
     for (let i = 0; i < this.draggableObjects.length; i++) {
@@ -251,6 +294,14 @@ export class LevelController extends Component {
         this.Broadcast({ topic: "level.completed" });
         this.OnNewLevel();
       }
+    }
+
+    this.position_.x += timeElapsed * this.velocity_;
+    this.velocity_ = Math.max(this.velocity_, -100);
+
+    if (this.mesh_) {
+      this.mixer_.update(timeElapsed);
+      this.mesh_.position.copy(this.position_);
     }
   }
 
